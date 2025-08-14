@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth System Documentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🔐 Auth System</h1>
+            <p>Complete Authentication & OTP Verification Documentation</p>
+        </header>
+
+        <nav class="nav">
+            <div class="nav-container">
+                <button class="nav-toggle" onclick="toggleNavMenu()">☰</button>
+                <ul class="nav-menu">
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#flow">User Flow</a></li>
+                    <li><a href="#api">API Endpoints</a></li>
+                    <li><a href="#security">Security</a></li>
+                    <li><a href="#setup">Setup</a></li>
+                    <li><a href="#extending">Extending</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>📋 Overview</h2>
+                <p>This is a complete, production-ready authentication system built with NestJS, MongoDB, and JWT. It includes secure user registration, email verification via OTP, login, and role-based access control.</p>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li>🔒 Secure password hashing with bcrypt (12 rounds)</li>
+                    <li>📧 Email verification with 6-digit OTP</li>
+                    <li>🎯 JWT-based authentication (24-hour expiry)</li>
+                    <li>👥 Role-based access control (USER/ADMIN)</li>
+                    <li>🧹 Automatic cleanup of expired tokens</li>
+                    <li>📱 GraphQL API with type-safe schema</li>
+                    <li>🛡️ Professional email templates</li>
+                    <li>⚡ Built with TypeScript for type safety</li>
+                </ul>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>🏗️ System Architecture</h2>
+                <div class="architecture-box">
+                    <div class="arch-component">
+                        <h4>Auth Module</h4>
+                        <ul>
+                            <li>AuthService</li>
+                            <li>AuthResolver</li>
+                            <li>EmailService</li>
+                            <li>JWT Strategy</li>
+                            <li>Guards & Decorators</li>
+                        </ul>
+                    </div>
+                    <div class="arch-component">
+                        <h4>User Module</h4>
+                        <ul>
+                            <li>UserService</li>
+                            <li>UserSchema</li>
+                            <li>UserResolver</li>
+                            <li>CRUD Operations</li>
+                            <li>OTP Management</li>
+                        </ul>
+                    </div>
+                    <div class="arch-component">
+                        <h4>Database</h4>
+                        <ul>
+                            <li>MongoDB</li>
+                            <li>Mongoose ODM</li>
+                            <li>User Documents</li>
+                            <li>Token Storage</li>
+                            <li>Automatic Cleanup</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="flow" class="section">
+                <h2>🔄 User Authentication Flow</h2>
+                
+                <h3>1. User Signup Process</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>1. Submit Form</h4>
+                        <p>User enters email & password</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>2. Validation</h4>
+                        <p>Check if user exists</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>3. Create User</h4>
+                        <p>Hash password & save user</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>4. Generate OTP</h4>
+                        <p>6-digit code, 10min expiry</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>5. Send Email</h4>
+                        <p>Professional OTP email</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>6. Return Token</h4>
+                        <p>JWT + user info (unverified)</p>
+                    </div>
+                </div>
+
+                <h3>2. OTP Verification Process</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>1. Enter OTP</h4>
+                        <p>User inputs 6-digit code</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>2. Validate</h4>
+                        <p>Check OTP & expiry</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>3. Verify User</h4>
+                        <p>Mark as verified & clear OTP</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>4. Success</h4>
+                        <p>Account activated</p>
+                    </div>
+                </div>
+
+                <h3>3. Login Process</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>1. Credentials</h4>
+                        <p>Email & password</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>2. Find User</h4>
+                        <p>Check if exists</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>3. Verify Status</h4>
+                        <p>Must be verified</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>4. Check Password</h4>
+                        <p>bcrypt validation</p>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-step">
+                        <h4>5. Generate JWT</h4>
+                        <p>24-hour token</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api" class="section">
+                <h2>📡 API Endpoints & GraphQL Mutations</h2>
+                <p>Copy these mutations directly into Postman or GraphQL Playground for testing:</p>
+                
+                <div class="api-endpoint">
+                    <h4>� 1. User Signup Mutation</h4>
+                    <p><strong>Purpose:</strong> Register a new user with email verification</p>
+                    <div class="code-block" data-lang="GraphQL">
+mutation Signup {
+  signup(signupInput: {
+    email: "test@example.com"
+    password: "password123"
+  }) {
+    token
+    user {
+      id
+      email
+      role
+      isVerified
+    }
+  }
+}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('signup')">📋 Copy Mutation</button>
+                </div>
+
+                <div class="api-endpoint">
+                    <h4>✅ 2. Verify OTP Mutation</h4>
+                    <p><strong>Purpose:</strong> Verify email with 6-digit OTP code</p>
+                    <div class="code-block" data-lang="GraphQL">
+mutation VerifyOtp {
+  verifyOtp(verifyOtpInput: {
+    email: "test@example.com"
+    otp: "123456"
+  }) {
+    success
+    message
+  }
+}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('verifyOtp')">📋 Copy Mutation</button>
+                </div>
+
+                <div class="api-endpoint">
+                    <h4>� 3. Resend OTP Mutation</h4>
+                    <p><strong>Purpose:</strong> Resend OTP if expired or lost</p>
+                    <div class="code-block" data-lang="GraphQL">
+mutation ResendOtp {
+  resendOtp(resendOtpInput: {
+    email: "test@example.com"
+  })
+}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('resendOtp')">📋 Copy Mutation</button>
+                </div>
+
+                <div class="api-endpoint">
+                    <h4>� 4. User Login Mutation</h4>
+                    <p><strong>Purpose:</strong> Authenticate verified user and get JWT token</p>
+                    <div class="code-block" data-lang="GraphQL">
+mutation Login {
+  login(loginInput: {
+    email: "test@example.com"
+    password: "password123"
+  }) {
+    token
+    user {
+      id
+      email
+      role
+      isVerified
+    }
+  }
+}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('login')">📋 Copy Mutation</button>
+                </div>
+
+                <div class="api-endpoint">
+                    <h4>� 5. Get Current User Query <span class="badge">Protected</span></h4>
+                    <p><strong>Purpose:</strong> Get current authenticated user profile</p>
+                    <p><strong>⚠️ Requires:</strong> Authorization header with Bearer token</p>
+                    <div class="code-block" data-lang="GraphQL">
+query Me {
+  me {
+    id
+    email
+    role
+    isVerified
+    createdAt
+    updatedAt
+  }
+}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('me')">📋 Copy Query</button>
+                </div>
+
+                <h3>📋 Postman Setup Instructions</h3>
+                <div class="api-endpoint">
+                    <h4>Headers for GraphQL Requests:</h4>
+                    <div class="code-block" data-lang="JSON">
+{
+  "Content-Type": "application/json"
+}</div>
+                    
+                    <h4>For Protected Queries (Authorization Required):</h4>
+                    <div class="code-block" data-lang="JSON">
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+}</div>
+                    
+                    <h4>Request Body Format:</h4>
+                    <div class="code-block" data-lang="JSON">
+{
+  "query": "YOUR_GRAPHQL_MUTATION_OR_QUERY_HERE"
+}</div>
+                </div>
+
+                <h3>🧪 Complete Testing Flow</h3>
+                <div class="api-endpoint">
+                    <p><strong>Step 1:</strong> Use <strong>Signup</strong> mutation → Get token (user unverified)</p>
+                    <p><strong>Step 2:</strong> Check email for OTP → Use <strong>Verify OTP</strong> mutation</p>
+                    <p><strong>Step 3:</strong> Use <strong>Login</strong> mutation → Get token (user verified)</p>
+                    <p><strong>Step 4:</strong> Use token with <strong>Me</strong> query → Get user profile</p>
+                    <p><strong>Step 5:</strong> Use <strong>Resend OTP</strong> if needed</p>
+                </div>
+            </section>
+
+            <section id="security" class="section">
+                <h2>🛡️ Security Features</h2>
+
+                <div class="security-feature">
+                    <h4>🔒 Password Security</h4>
+                    <p>Passwords are hashed using bcrypt with 12 salt rounds, making them computationally expensive to crack.</p>
+                </div>
+
+                <div class="security-feature">
+                    <h4>🎯 JWT Authentication</h4>
+                    <p>JSON Web Tokens with 24-hour expiry. Includes user ID and email in payload for quick user lookup.</p>
+                </div>
+
+                <div class="security-feature">
+                    <h4>📧 Email Verification</h4>
+                    <p>Mandatory email verification with 6-digit OTP codes that expire in 10 minutes.</p>
+                </div>
+
+                <div class="security-feature">
+                    <h4>👥 Role-Based Access</h4>
+                    <p>Support for USER and ADMIN roles with guards to protect sensitive endpoints.</p>
+                </div>
+
+                <div class="security-feature">
+                    <h4>🧹 Automatic Cleanup</h4>
+                    <p>Hourly cron job removes expired OTPs and reset tokens to maintain database hygiene.</p>
+                </div>
+
+                <h3>Database Schema</h3>
+                <div class="code-block" data-lang="TypeScript">
+{
+  _id: ObjectId,
+  email: string,           // Unique email address
+  password: string,        // bcrypt hashed (12 rounds)
+  role: UserRole,          // USER | ADMIN
+  isVerified: boolean,     // Email verification status
+  otp?: string,           // 6-digit temporary code
+  otpExpiry?: Date,       // OTP expiration time
+  resetPasswordToken?: string,
+  resetPasswordExpiry?: Date,
+  createdAt: Date,
+  updatedAt: Date
+}
+                </div>
+            </section>
+
+            <section id="setup" class="section">
+                <h2>⚙️ Environment Setup</h2>
+                
+                <h3>Required Environment Variables</h3>
+                <div class="code-block" data-lang="ENV">
+# Database
+MONGO_URI=mongodb://localhost:27017/authdb
+
+# JWT Configuration
+JWT_SECRET=your-super-secure-jwt-secret-key-here
+
+# Email Configuration (Gmail SMTP)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-specific-password
+EMAIL_FROM=noreply@yourapp.com
+
+# Frontend URL (for email links)
+FRONTEND_URL=http://localhost:3000
+                </div>
+
+                <h3>Installation & Running</h3>
+                <div class="code-block" data-lang="bash">
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start development server
+npm run start:dev
+
+# Run in production
+npm run build
+npm run start:prod
+                </div>
+
+                <h3>Required Dependencies</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Package</th>
+                            <th>Purpose</th>
+                            <th>Version</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@nestjs/mongoose</td>
+                            <td>MongoDB integration</td>
+                            <td>Latest</td>
+                        </tr>
+                        <tr>
+                            <td>@nestjs/jwt</td>
+                            <td>JWT authentication</td>
+                            <td>Latest</td>
+                        </tr>
+                        <tr>
+                            <td>@nestjs/passport</td>
+                            <td>Authentication strategies</td>
+                            <td>Latest</td>
+                        </tr>
+                        <tr>
+                            <td>bcrypt</td>
+                            <td>Password hashing</td>
+                            <td>Latest</td>
+                        </tr>
+                        <tr>
+                            <td>nodemailer</td>
+                            <td>Email sending</td>
+                            <td>Latest</td>
+                        </tr>
+                        <tr>
+                            <td>passport-jwt</td>
+                            <td>JWT strategy</td>
+                            <td>Latest</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="extending" class="section">
+                <h2>🚀 Extending the System</h2>
+                
+                <h3>Adding New Fields to Signup</h3>
+                <p>Follow these steps to add additional user fields:</p>
+
+                <h4>Step 1: Update Signup Input DTO</h4>
+                <div class="code-block" data-lang="TypeScript">
+// src/auth/dto/signup.input.ts
+@InputType()
+export class SignupInput {
+  @Field()
+  @IsEmail()
+  email: string;
+
+  @Field()
+  @IsString()
+  @MinLength(8)
+  password: string;
+
+  // Add new fields here
+  @Field()
+  @IsString()
+  firstName: string;
+
+  @Field()
+  @IsString()
+  lastName: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+}
+                </div>
+
+                <h4>Step 2: Update User Schema</h4>
+                <div class="code-block" data-lang="TypeScript">
+// src/user/schema/user.schema.ts
+@Schema({ timestamps: true })
+@ObjectType()
+export class User {
+  // Existing fields...
+
+  @Field()
+  @Prop()
+  firstName: string;
+
+  @Field()
+  @Prop()
+  lastName: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  phoneNumber?: string;
+}
+                </div>
+
+                <h4>Step 3: Update Auth Service</h4>
+                <div class="code-block" data-lang="TypeScript">
+// src/auth/auth.service.ts
+async signup(signupInput: SignupInput): Promise<AuthResponse> {
+  const { email, password, firstName, lastName, phoneNumber } = signupInput;
+  
+  // ... existing logic ...
+  
+  const user = await this.userService.create({
+    email,
+    password: hashedPassword,
+    firstName,
+    lastName,
+    phoneNumber
+  });
+  
+  // ... rest of the method
+}
+                </div>
+
+                <h3>Adding New Authentication Methods</h3>
+                <p>You can extend this system with:</p>
+                <ul>
+                    <li>🔐 OAuth (Google, Facebook, GitHub)</li>
+                    <li>📱 SMS OTP verification</li>
+                    <li>🔑 Two-factor authentication (2FA)</li>
+                    <li>🎭 Social media login</li>
+                    <li>🔒 Password reset functionality</li>
+                </ul>
+
+                <h3>Customizing Email Templates</h3>
+                <p>Edit <code>src/auth/email.service.ts</code> to customize:</p>
+                <ul>
+                    <li>📧 OTP email design</li>
+                    <li>🎨 Brand colors and styling</li>
+                    <li>📝 Email content and language</li>
+                    <li>🖼️ Company logos and images</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Auth System Documentation. Built with ❤️ for the open-source community.</p>
+            <p>Made By Shrey Lakhataria</p>
+            <p>Made with NestJS • MongoDB • JWT • TypeScript</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,8 +1,28 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { GraphQLModule } from '@nestjs/graphql';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const logger = new Logger('Bootstrap');
+
+  try {
+    const app = await NestFactory.create(AppModule);
+
+    // GraphQL setup
+    app.use(
+      GraphQLModule.forRoot({
+        autoSchemaFile: 'schema.gql',
+        playground: true,
+      }),
+    );
+
+    const port = process.env.PORT ?? 3000;
+    await app.listen(port);
+    logger.log(`Application is running on: http://localhost:${port}`);
+  } catch (error) {
+    logger.error('Error during application startup', error);
+    process.exit(1);
+  }
 }
 bootstrap();

@@ -6,6 +6,17 @@ import { LoginInput } from './dto/login.input';
 import { AuthResponse } from './dto/auth-response.dto';
 import { EmailService } from './email.service';
 import { UserService } from '../user/user.service';
+import { Types } from 'mongoose';
+import { UserDocument } from '../user/schema/user.schema';
+
+// Ensure proper typing for the user object
+interface User {
+    _id: Types.ObjectId;
+    email: string;
+    password: string;
+    role: string;
+    isVerified: boolean;
+}
 
 @Injectable()
 export class AuthService {
@@ -50,7 +61,7 @@ export class AuthService {
     return {
       token,
       user: {
-        id: (user._id as any).toString(),
+        id: (user._id as Types.ObjectId).toString(),
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,
@@ -117,10 +128,10 @@ export class AuthService {
     return {
       token,
       user: {
-        id: (user._id as any).toString(),
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
+        id: (user?._id as Types.ObjectId).toString(),
+        email: user?.email,
+        role: user?.role,
+        isVerified: user?.isVerified,
       },
     };
   }
@@ -132,7 +143,7 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
       return {
-        id: (user._id as any).toString(),
+        id: (user._id as Types.ObjectId).toString(),
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,

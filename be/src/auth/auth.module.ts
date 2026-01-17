@@ -14,8 +14,8 @@ import { UserModule } from '../user/user.module';
   imports: [
     PassportModule.register({ session: false }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '24h' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '15m' },
     }),
     UserModule,
     ScheduleModule.forRoot(),

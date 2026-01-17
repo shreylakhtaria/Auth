@@ -1,6 +1,5 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { GraphQLModule } from '@nestjs/graphql';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,17 +8,25 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
-    // GraphQL setup
-    app.use(
-      GraphQLModule.forRoot({
-        autoSchemaFile: 'schema.gql',
-        playground: true,
+    // Enable CORS
+    app.enableCors({
+      origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+      credentials: true,
+    });
+
+    // Enable validation pipes globally
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
       }),
     );
 
-    const port = process.env.PORT ?? 3000;
+    const port = process.env.PORT ?? 3001;
     await app.listen(port);
     logger.log(`Application is running on: http://localhost:${port}`);
+    logger.log(`GraphQL Playground: http://localhost:${port}/graphql`);
   } catch (error) {
     logger.error('Error during application startup', error);
     process.exit(1);

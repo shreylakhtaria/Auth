@@ -1,0 +1,68 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  token: String!
+  user: UserResponse!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  login(loginInput: LoginInput!): AuthResponse!
+  resendOtp(resendOtpInput: ResendOtpInput!): String!
+  signup(signupInput: SignupInput!): AuthResponse!
+  verifyOtp(verifyOtpInput: VerifyOtpInput!): OtpVerificationResponse!
+}
+
+type OtpVerificationResponse {
+  message: String!
+  success: Boolean!
+}
+
+type Query {
+  me: User!
+}
+
+input ResendOtpInput {
+  email: String!
+}
+
+input SignupInput {
+  email: String!
+  password: String!
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  isVerified: Boolean!
+  role: UserRole!
+  updatedAt: DateTime!
+}
+
+type UserResponse {
+  email: String!
+  id: String!
+  isVerified: Boolean!
+  role: UserRole!
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+input VerifyOtpInput {
+  email: String!
+  otp: String!
+}

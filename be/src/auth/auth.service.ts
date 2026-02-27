@@ -11,11 +11,11 @@ import { UserDocument } from '../user/schema/user.schema';
 
 // Ensure proper typing for the user object
 interface User {
-    _id: Types.ObjectId;
-    email: string;
-    password: string;
-    role: string;
-    isVerified: boolean;
+  _id: Types.ObjectId;
+  email: string;
+  password: string;
+  role: string;
+  isVerified: boolean;
 }
 
 @Injectable()
@@ -24,7 +24,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private emailService: EmailService,
-  ) {}
+  ) { }
 
   async signup(signupInput: SignupInput): Promise<AuthResponse> {
     const { email, password } = signupInput;
@@ -71,7 +71,7 @@ export class AuthService {
 
   async verifyOtp(email: string, otp: string): Promise<{ success: boolean; message: string }> {
     const isValid = await this.userService.verifyOtp(email, otp);
-    
+
     if (isValid) {
       return { success: true, message: 'OTP verified successfully. Account activated.' };
     } else {
@@ -147,6 +147,8 @@ export class AuthService {
         email: user.email,
         role: user.role,
         isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid token');

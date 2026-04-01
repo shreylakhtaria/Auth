@@ -7,7 +7,6 @@ import { join } from 'path';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { FinanceModule } from './finance/finance.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -31,7 +30,6 @@ import { validate } from './config/env.validation';
     }),
     AuthModule,
     UserModule,
-    FinanceModule,
   ],
   providers: [AppService],
 })

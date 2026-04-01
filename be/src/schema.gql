@@ -7,10 +7,68 @@ type AuthResponse {
   user: UserResponse!
 }
 
+type CategoryTotal {
+  category: String!
+  count: Int!
+  total: Float!
+}
+
+input CreateFinanceInput {
+  amount: Float!
+  category: FinanceCategory!
+  date: String!
+  description: String
+  type: FinanceType!
+}
+
+type DashboardSummary {
+  categoryWiseTotals: [CategoryTotal!]!
+  netBalance: Float!
+  periodEnd: DateTime!
+  periodStart: DateTime!
+  recentActivity: [Finance!]!
+  totalExpense: Float!
+  totalIncome: Float!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input FilterFinanceInput {
+  category: FinanceCategory
+  dateFrom: String
+  dateTo: String
+  type: FinanceType
+}
+
+type Finance {
+  _id: ID!
+  amount: Float!
+  category: FinanceCategory!
+  createdAt: DateTime!
+  date: DateTime!
+  description: String
+  type: FinanceType!
+  updatedAt: DateTime!
+  userId: ID!
+}
+
+enum FinanceCategory {
+  ENTERTAINMENT
+  FOOD
+  HEALTHCARE
+  OTHER
+  SALARY
+  TRANSPORTATION
+  UTILITIES
+}
+
+enum FinanceType {
+  EXPENSE
+  INCOME
+}
 
 input LoginInput {
   email: String!
@@ -18,9 +76,12 @@ input LoginInput {
 }
 
 type Mutation {
+  createFinance(input: CreateFinanceInput!): Finance!
+  deleteFinance(id: ID!): Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   resendOtp(resendOtpInput: ResendOtpInput!): String!
   signup(signupInput: SignupInput!): AuthResponse!
+  updateFinance(id: ID!, input: UpdateFinanceInput!): Finance!
   verifyOtp(verifyOtpInput: VerifyOtpInput!): OtpVerificationResponse!
 }
 
@@ -29,7 +90,25 @@ type OtpVerificationResponse {
   success: Boolean!
 }
 
+type PaginatedFinanceResponse {
+  items: [Finance!]!
+  total: Int!
+}
+
+input PaginationInput {
+  skip: Int
+  take: Int
+}
+
 type Query {
+  getCategoryWiseTotals(endDate: String, startDate: String): [CategoryTotal!]!
+  getDashboardSummary(endDate: String, startDate: String): DashboardSummary!
+  getFinance(id: ID!): Finance!
+  getNetBalance(endDate: String, startDate: String): Float!
+  getRecentActivity(limit: Float): [Finance!]!
+  getTotalExpense(endDate: String, startDate: String): Float!
+  getTotalIncome(endDate: String, startDate: String): Float!
+  listFinances(filter: FilterFinanceInput, pagination: PaginationInput): PaginatedFinanceResponse!
   me: User!
 }
 
@@ -40,6 +119,14 @@ input ResendOtpInput {
 input SignupInput {
   email: String!
   password: String!
+}
+
+input UpdateFinanceInput {
+  amount: Float
+  category: FinanceCategory
+  date: String
+  description: String
+  type: FinanceType
 }
 
 type User {
@@ -59,7 +146,8 @@ type UserResponse {
 
 enum UserRole {
   ADMIN
-  USER
+  ANALYST
+  VIEWER
 }
 
 input VerifyOtpInput {

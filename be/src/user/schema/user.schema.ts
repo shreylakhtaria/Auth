@@ -5,7 +5,8 @@ import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 export type UserDocument = User & Document;
 
 export enum UserRole {
-  USER = 'USER',
+  VIEWER = 'VIEWER',
+  ANALYST = 'ANALYST',
   ADMIN = 'ADMIN',
 }
 
@@ -24,7 +25,7 @@ export class User {
   password: string;
 
   @Field(() => UserRole)
-  @Prop({ type: String, enum: UserRole, default: UserRole.USER })
+  @Prop({ type: String, enum: UserRole, default: UserRole.VIEWER })
   role: UserRole;
 
   @Field()
